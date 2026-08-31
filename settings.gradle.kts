@@ -25,4 +25,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Deeper Task"
-include(":app")
+include(":app", ":core:designsystem")
