@@ -2,6 +2,7 @@ plugins {
     id("deepertask.android.application")
     id("deepertask.android.compose")
     id("deepertask.android.hilt")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -24,10 +25,12 @@ android {
 
 dependencies {
     implementation(projects.core.designsystem)
+    implementation(projects.core.navigation)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
+    implementation(libs.kotlinx.serialization.core)
 }
