@@ -9,6 +9,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.deeper.deepertask.feature.login.api.LoginRoute
 import com.deeper.deepertask.feature.login.impl.navigation.loginEntry
+import com.deeper.deepertask.feature.scans.impl.navigation.scansEntry
 import com.deeper.deepertask.navigation.BackStackNavigator
 
 @Composable
@@ -24,6 +25,7 @@ internal fun DeeperTaskApp() {
         onBack = navigator::goBack,
         entryProvider = entryProvider {
             loginEntry(navigator)
+            scansEntry()
         },
     )
 }
