@@ -40,3 +40,5 @@ fun includeModulesUnder(group: String) {
 include(":app")
 includeModulesUnder("core")
 includeModulesUnder("feature")
+include(":feature:login:api")
+include(":feature:login:impl")
