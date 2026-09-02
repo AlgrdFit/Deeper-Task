@@ -28,17 +28,21 @@ rootProject.name = "DeeperTask"
 
 fun includeModulesUnder(group: String) {
     rootDir.resolve(group)
-        .listFiles()
-        ?.asSequence()
-        ?.filter { directory ->
-            directory.isDirectory && directory.resolve("build.gradle.kts").isFile
+        .walkTopDown()
+        .onEnter { directory ->
+            directory.name != "build" && !directory.name.startsWith(".")
         }
-        ?.sortedBy { directory -> directory.name }
-        ?.forEach { directory -> include(":$group:${directory.name}") }
+        .filter { file -> file.isFile && file.name == "build.gradle.kts" }
+        .map { buildFile ->
+            buildFile.parentFile
+                .relativeTo(rootDir)
+                .invariantSeparatorsPath
+                .replace('/', ':')
+        }
+        .sorted()
+        .forEach { modulePath -> include(":$modulePath") }
 }
 
 include(":app")
 includeModulesUnder("core")
 includeModulesUnder("feature")
-include(":feature:login:api")
-include(":feature:login:impl")
