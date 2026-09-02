@@ -3,7 +3,7 @@ package com.deeper.deepertask.feature.login.impl.data.repository
 import com.deeper.deepertask.core.network.NetworkError
 import com.deeper.deepertask.core.network.NetworkResult
 import com.deeper.deepertask.core.network.networkCall
-import com.deeper.deepertask.feature.login.impl.data.mapper.toTokenOrNull
+import com.deeper.deepertask.feature.login.impl.data.mapper.toLoginSuccessOrNull
 import com.deeper.deepertask.feature.login.impl.data.remote.LoginApi
 import com.deeper.deepertask.feature.login.impl.data.remote.LoginRequestDto
 import com.deeper.deepertask.feature.login.impl.domain.model.LoginError
@@ -26,12 +26,8 @@ internal class LoginRepositoryImpl @Inject constructor(
             }
         ) {
             is NetworkResult.Success -> {
-                val token = result.value.toTokenOrNull()
-                if (token == null) {
-                    LoginResult.Failure(LoginError.InvalidResponse)
-                } else {
-                    LoginResult.Success(token)
-                }
+                val login = result.value.toLoginSuccessOrNull()
+                login ?: LoginResult.Failure(LoginError.InvalidResponse)
             }
 
             is NetworkResult.Failure -> LoginResult.Failure(result.error.toLoginError())

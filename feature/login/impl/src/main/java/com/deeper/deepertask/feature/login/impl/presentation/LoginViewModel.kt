@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.deeper.deepertask.feature.login.impl.domain.model.LoginResult
 import com.deeper.deepertask.feature.login.impl.domain.usecase.AuthenticateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,6 +20,9 @@ internal class LoginViewModel @Inject constructor(
 ) : ViewModel() {
     private val mutableUiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = mutableUiState.asStateFlow()
+
+    private val eventsChannel = Channel<LoginEvent>(capacity = Channel.BUFFERED)
+    val events = eventsChannel.receiveAsFlow()
 
     fun onEmailChanged(email: String) {
         mutableUiState.update { current ->
@@ -77,6 +82,9 @@ internal class LoginViewModel @Inject constructor(
                         is LoginResult.Failure -> LoginStatus.Error(result.error)
                     },
                 )
+            }
+            if (result is LoginResult.Success) {
+                eventsChannel.send(LoginEvent.NavigateToScans(result.scans))
             }
         }
     }

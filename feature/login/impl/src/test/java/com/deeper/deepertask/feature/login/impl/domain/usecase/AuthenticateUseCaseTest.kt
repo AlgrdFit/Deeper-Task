@@ -3,6 +3,7 @@ package com.deeper.deepertask.feature.login.impl.domain.usecase
 import com.deeper.deepertask.feature.login.impl.domain.model.LoginError
 import com.deeper.deepertask.feature.login.impl.domain.model.LoginResult
 import com.deeper.deepertask.feature.login.impl.domain.repository.LoginRepository
+import com.deeper.deepertask.feature.scans.api.ScanSummary
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -15,13 +16,18 @@ class AuthenticateUseCaseTest {
     private val emailWithWhitespace = "  $email  "
     private val passwordWithWhitespace = " password "
     private val wrongPassword = "wrong"
-    private val sessionToken = "session-token"
-    private val successfulLogin = LoginResult.Success(sessionToken)
+    private val initialScans = listOf(
+        ScanSummary(id = 42L, name = "Lake scan", date = null),
+    )
+    private val successfulLogin = LoginResult.Success(
+        token = "token",
+        scans = initialScans,
+    )
     private val invalidCredentialsFailure = LoginResult.Failure(LoginError.InvalidCredentials)
     private val loginRepository = mockk<LoginRepository>()
 
     @Test
-    fun `successful authentication trims email and returns repository result`() = runTest {
+    fun `successful authentication trims email and returns login result`() = runTest {
         // Arrange
         coEvery {
             loginRepository.login(email, passwordWithWhitespace)
