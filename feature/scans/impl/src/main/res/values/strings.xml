@@ -1,0 +1,6 @@
+<resources>
+    <string name="scans_title">Scans</string>
+    <string name="scans_unnamed">Unnamed scan</string>
+    <string name="scans_date_unavailable">Date unavailable</string>
+    <string name="scans_empty">No scans found</string>
+</resources>
