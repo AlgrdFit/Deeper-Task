@@ -22,23 +22,27 @@ class LoginRepositoryImplTest {
     private val email = "angler@example.com"
     private val password = "password"
     private val wrongPassword = "wrong"
-    private val sessionToken = "session-token"
+    private val token = "token"
     private val emptyResponseBody = ""
     private val jsonMediaType = "application/json".toMediaType()
     private val validRequest = LoginRequestDto(email, password)
     private val invalidCredentialsRequest = LoginRequestDto(email, wrongPassword)
     private val validLoginResponse = LoginResponseDto(
         login = LoginDto(
-            token = sessionToken,
+            token = token,
             validated = true,
             validTill = "2030-04-26T11:07:22Z",
         ),
         scans = emptyList(),
     )
+    private val successfulLogin = LoginResult.Success(
+        token = token,
+        scans = emptyList(),
+    )
     private val loginApi = mockk<LoginApi>()
 
     @Test
-    fun `returns mapped token after successful API response`() = runTest {
+    fun `returns mapped login data after successful API response`() = runTest {
         // Arrange
         coEvery {
             loginApi.login(validRequest)
@@ -49,7 +53,7 @@ class LoginRepositoryImplTest {
         val result = fixture.login(email, password)
 
         // Assert
-        assertEquals(LoginResult.Success(sessionToken), result)
+        assertEquals(successfulLogin, result)
         coVerify(exactly = 1) {
             loginApi.login(validRequest)
         }

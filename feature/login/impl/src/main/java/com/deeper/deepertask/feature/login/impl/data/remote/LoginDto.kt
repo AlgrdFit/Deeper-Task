@@ -7,7 +7,7 @@ internal data class LoginRequestDto(
 
 internal data class LoginResponseDto(
     val login: LoginDto?,
-    val scans: List<ScanDto>?,
+    val scans: List<ScanDto?>?,
 )
 
 internal data class LoginDto(

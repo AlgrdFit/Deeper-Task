@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,13 +35,23 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.deeper.deepertask.core.designsystem.theme.DeeperTaskTheme
 import com.deeper.deepertask.feature.login.impl.R
 import com.deeper.deepertask.feature.login.impl.domain.model.LoginError
+import com.deeper.deepertask.feature.scans.api.ScanSummary
 
 @Composable
 internal fun LoginScreen(
+    onLoginSuccess: (List<ScanSummary>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: LoginViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is LoginEvent.NavigateToScans -> onLoginSuccess(event.scans)
+            }
+        }
+    }
 
     LoginContent(
         uiState = uiState,

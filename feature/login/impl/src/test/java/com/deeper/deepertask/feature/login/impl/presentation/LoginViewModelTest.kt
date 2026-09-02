@@ -3,12 +3,14 @@ package com.deeper.deepertask.feature.login.impl.presentation
 import com.deeper.deepertask.feature.login.impl.domain.model.LoginError
 import com.deeper.deepertask.feature.login.impl.domain.model.LoginResult
 import com.deeper.deepertask.feature.login.impl.domain.usecase.AuthenticateUseCase
+import com.deeper.deepertask.feature.scans.api.ScanSummary
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -24,8 +26,14 @@ class LoginViewModelTest {
     private val email = "angler@example.com"
     private val password = "password"
     private val wrongPassword = "wrong"
-    private val sessionToken = "session-token"
-    private val successfulLogin = LoginResult.Success(sessionToken)
+    private val token = "token"
+    private val initialScans = listOf(
+        ScanSummary(id = 42L, name = "Lake scan", date = null),
+    )
+    private val successfulLogin = LoginResult.Success(
+        token = token,
+        scans = initialScans,
+    )
     private val invalidCredentialsFailure = LoginResult.Failure(LoginError.InvalidCredentials)
     private val authenticate = mockk<AuthenticateUseCase>()
 
@@ -35,6 +43,8 @@ class LoginViewModelTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         Dispatchers.setMain(dispatcher)
         val fixture = fixture()
+        fixture.onEmailChanged("")
+        fixture.onPasswordChanged("")
 
         try {
             // Act
@@ -69,10 +79,12 @@ class LoginViewModelTest {
             fixture.onSubmit()
             val loadingState = fixture.uiState.value
             advanceUntilIdle()
+            val navigationEvent = fixture.events.first()
 
             // Assert
             assertEquals(LoginStatus.Loading, loadingState.status)
             assertEquals(LoginStatus.Success, fixture.uiState.value.status)
+            assertEquals(LoginEvent.NavigateToScans(initialScans), navigationEvent)
             coVerify(exactly = 1) {
                 authenticate(email, password)
             }
