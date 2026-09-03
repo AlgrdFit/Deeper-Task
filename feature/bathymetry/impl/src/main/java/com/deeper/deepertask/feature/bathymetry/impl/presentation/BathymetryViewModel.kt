@@ -2,7 +2,7 @@ package com.deeper.deepertask.feature.bathymetry.impl.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.deeper.deepertask.feature.bathymetry.impl.di.BathymetryDefaultDispatcher
+import com.deeper.deepertask.core.coroutines.DefaultDispatcher
 import com.deeper.deepertask.feature.bathymetry.impl.domain.model.BathymetryError
 import com.deeper.deepertask.feature.bathymetry.impl.domain.model.BathymetryResult
 import com.deeper.deepertask.feature.bathymetry.impl.domain.repository.BathymetryRepository
@@ -22,7 +22,7 @@ import javax.inject.Inject
 internal class BathymetryViewModel @Inject constructor(
     private val repository: BathymetryRepository,
     private val uiMapper: BathymetryUiMapper,
-    @param:BathymetryDefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
+    @param:DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val mutableUiState = MutableStateFlow<BathymetryUiState>(BathymetryUiState.Loading)
     val uiState: StateFlow<BathymetryUiState> = mutableUiState.asStateFlow()

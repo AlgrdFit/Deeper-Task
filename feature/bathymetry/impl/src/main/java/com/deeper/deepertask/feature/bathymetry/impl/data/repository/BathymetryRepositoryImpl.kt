@@ -1,11 +1,11 @@
 package com.deeper.deepertask.feature.bathymetry.impl.data.repository
 
+import com.deeper.deepertask.core.coroutines.DefaultDispatcher
 import com.deeper.deepertask.core.network.NetworkError
 import com.deeper.deepertask.core.network.NetworkResult
 import com.deeper.deepertask.core.network.networkCall
 import com.deeper.deepertask.feature.bathymetry.impl.data.mapper.toBathymetryDataOrNull
 import com.deeper.deepertask.feature.bathymetry.impl.data.remote.BathymetryApi
-import com.deeper.deepertask.feature.bathymetry.impl.di.BathymetryDefaultDispatcher
 import com.deeper.deepertask.feature.bathymetry.impl.domain.model.BathymetryError
 import com.deeper.deepertask.feature.bathymetry.impl.domain.model.BathymetryResult
 import com.deeper.deepertask.feature.bathymetry.impl.domain.repository.BathymetryRepository
@@ -17,7 +17,7 @@ import javax.inject.Inject
 internal class BathymetryRepositoryImpl @Inject constructor(
     private val bathymetryApi: BathymetryApi,
     private val tokenStore: TokenStore,
-    @param:BathymetryDefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
+    @param:DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
 ) : BathymetryRepository {
     override suspend fun getBathymetry(scanId: Long): BathymetryResult {
         val token = tokenStore.read()?.takeIf(String::isNotBlank)
