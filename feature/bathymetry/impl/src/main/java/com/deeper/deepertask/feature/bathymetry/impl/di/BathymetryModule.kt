@@ -8,15 +8,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import retrofit2.Retrofit
-import javax.inject.Qualifier
 import javax.inject.Singleton
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-internal annotation class BathymetryDefaultDispatcher
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -35,8 +28,4 @@ internal object BathymetryProvidersModule {
     @Singleton
     fun provideBathymetryApi(retrofit: Retrofit): BathymetryApi =
         retrofit.create(BathymetryApi::class.java)
-
-    @Provides
-    @BathymetryDefaultDispatcher
-    fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
 }
