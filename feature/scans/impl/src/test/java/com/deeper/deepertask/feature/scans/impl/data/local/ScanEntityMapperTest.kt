@@ -13,13 +13,12 @@ class ScanEntityMapperTest {
     )
 
     @Test
-    fun `maps scan to entity and back without losing nullable values`() {
+    fun `maps scan to entity without losing nullable values`() {
         // Arrange
         val position = 3
 
         // Act
         val entity = scan.toEntity(position)
-        val result = entity.toScanSummary()
 
         // Assert
         assertEquals(
@@ -31,6 +30,5 @@ class ScanEntityMapperTest {
             ),
             entity,
         )
-        assertEquals(scan, result)
     }
 }

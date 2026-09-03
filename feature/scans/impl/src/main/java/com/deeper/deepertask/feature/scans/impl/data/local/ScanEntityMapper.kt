@@ -9,9 +9,3 @@ internal fun ScanSummary.toEntity(position: Int): ScanEntity = ScanEntity(
     name = name,
     date = date,
 )
-
-internal fun ScanEntity.toScanSummary(): ScanSummary = ScanSummary(
-    id = id,
-    name = name,
-    date = date,
-)

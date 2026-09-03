@@ -6,13 +6,9 @@ import com.deeper.deepertask.feature.scans.api.ScanSummary
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ScansRepositoryImplTest {
@@ -25,19 +21,6 @@ class ScansRepositoryImplTest {
         ScanEntity(position = 1, id = null, name = null, date = null),
     )
     private val scanDao = mockk<ScanDao>()
-
-    @Test
-    fun `observe maps the ordered database snapshot to scan summaries`() = runTest {
-        // Arrange
-        every { scanDao.observeAll() } returns flowOf(entities)
-        val fixture = fixture()
-
-        // Act
-        val result = fixture.observeScans().first()
-
-        // Assert
-        assertEquals(scans, result)
-    }
 
     @Test
     fun `replace assigns response positions and replaces the database snapshot`() = runTest {

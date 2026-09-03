@@ -11,20 +11,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.deeper.deepertask.core.designsystem.theme.DeeperTaskTheme
 import com.deeper.deepertask.feature.scans.api.ScanSummary
 import com.deeper.deepertask.feature.scans.impl.R
@@ -36,16 +33,15 @@ internal fun ScansScreen(
     modifier: Modifier = Modifier,
 ) {
     val viewModel: ScansViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = remember(scans) { scans.toScansUiState() }
 
     LaunchedEffect(scans) {
-        viewModel.load(scans)
+        viewModel.cache(scans)
     }
 
     ScansContent(
         uiState = uiState,
         onScanSelected = onScanSelected,
-        onRetry = viewModel::retry,
         modifier = modifier,
     )
 }
@@ -54,7 +50,6 @@ internal fun ScansScreen(
 internal fun ScansContent(
     uiState: ScansUiState,
     onScanSelected: (Long) -> Unit,
-    onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -69,15 +64,6 @@ internal fun ScansContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         when (uiState) {
-            ScansUiState.Loading -> Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator()
-            }
-
             is ScansUiState.Content -> LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -104,25 +90,6 @@ internal fun ScansContent(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-
-            ScansUiState.StorageError -> Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    text = stringResource(R.string.scans_error_cache),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.error,
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = onRetry) {
-                    Text(stringResource(R.string.scans_retry))
-                }
-            }
-
         }
     }
 }
@@ -174,7 +141,6 @@ private fun ScansPreview() {
                 ),
             ),
             onScanSelected = {},
-            onRetry = {},
         )
     }
 }
