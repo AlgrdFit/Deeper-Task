@@ -9,5 +9,6 @@ android {
 dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.navigation)
+    implementation(projects.feature.bathymetry.api)
     api(projects.feature.scans.api)
 }
