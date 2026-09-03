@@ -52,8 +52,8 @@ The Gradle wrapper is included. The project pins its Gradle daemon to JDK 25 thr
    `sdk.dir=C\:\\Users\\name\\AppData\\Local\\Android\\Sdk`.
 
 3. Restrict the Maps key in Google Cloud Console to Android applications using package name
-   `com.deeper.deepertask` and the SHA-1 certificate fingerprint of the signing key. For the local
-   debug build, obtain that fingerprint with:
+   `com.deeper.deepertask` and the SHA-1 certificate fingerprint of every signing key that needs to
+   run the app. For the local debug build, obtain that fingerprint with:
 
    ```shell
    ./gradlew signingReport
@@ -83,20 +83,25 @@ Windows:
 .\gradlew.bat lint test :app:assembleDebug
 ```
 
-The evaluation APK is generated at:
+These commands exercise the source build used by CI. To create a distributable APK, use Android
+Studio's **Build > Generate Signed App Bundle or APK** action, select **APK** and the `release` build
+variant, and keep the release keystore and its passwords outside the repository.
+
+The packaged evaluation APK is attached to the
+[v1.0.0 GitHub Release](https://github.com/AlgrdFit/Deeper-Task/releases/tag/v1.0.0) as:
 
 ```text
-app/build/outputs/apk/debug/app-debug.apk
+DeeperTask-v1.0.0-release.apk
 ```
 
 Install it with the Android SDK's `adb`:
 
 ```shell
-adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb install DeeperTask-v1.0.0-release.apk
 ```
 
-The packaged evaluation build is also attached to the
-[v1.0.0 GitHub Release](https://github.com/AlgrdFit/Deeper-Task/releases/tag/v1.0.0).
+The Maps API key is packaged into the APK at build time, so evaluators do not need a local key or
+Android Studio to run the distributed build.
 
 ## Architecture
 
@@ -141,7 +146,8 @@ another feature's implementation.
 
 ## Known limitations
 
-- The published v1.0.0 APK is debug-signed and intended only for assignment evaluation.
+- The published v1.0.0 APK uses a locally managed release certificate for direct assignment
+  evaluation and is not distributed through Google Play.
 - The app targets the provided Deeper staging service and depends on that external service remaining
   available.
 - Demo credentials are intentionally embedded as login defaults for the reviewer build. They must
@@ -155,5 +161,5 @@ another feature's implementation.
 
 ## Release
 
-Version `1.0.0` is delivered as a clearly labelled debug APK for installation on API-26+ devices.
+Version `1.0.0` is delivered as a signed release APK for installation on API-26+ devices.
 The GitHub Release includes its SHA-256 checksum, verification summary, and the limitations above.
