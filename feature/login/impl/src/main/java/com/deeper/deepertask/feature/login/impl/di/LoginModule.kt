@@ -3,6 +3,8 @@ package com.deeper.deepertask.feature.login.impl.di
 import com.deeper.deepertask.feature.login.impl.data.remote.LoginApi
 import com.deeper.deepertask.feature.login.impl.data.repository.LoginRepositoryImpl
 import com.deeper.deepertask.feature.login.impl.domain.repository.LoginRepository
+import com.deeper.deepertask.feature.login.api.TokenStore
+import com.deeper.deepertask.feature.login.impl.data.session.SharedPreferencesTokenStore
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -17,6 +19,10 @@ internal abstract class LoginBindingsModule {
     @Binds
     @Singleton
     abstract fun bindLoginRepository(implementation: LoginRepositoryImpl): LoginRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTokenStore(implementation: SharedPreferencesTokenStore): TokenStore
 }
 
 @Module
