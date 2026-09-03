@@ -1,4 +1,6 @@
 pluginManagement {
+    includeBuild("build-logic")
+
     repositories {
         google {
             content {
@@ -11,9 +13,9 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-}
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -22,5 +24,25 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Deeper Task"
+rootProject.name = "DeeperTask"
+
+fun includeModulesUnder(group: String) {
+    rootDir.resolve(group)
+        .walkTopDown()
+        .onEnter { directory ->
+            directory.name != "build" && !directory.name.startsWith(".")
+        }
+        .filter { file -> file.isFile && file.name == "build.gradle.kts" }
+        .map { buildFile ->
+            buildFile.parentFile
+                .relativeTo(rootDir)
+                .invariantSeparatorsPath
+                .replace('/', ':')
+        }
+        .sorted()
+        .forEach { modulePath -> include(":$modulePath") }
+}
+
 include(":app")
+includeModulesUnder("core")
+includeModulesUnder("feature")
