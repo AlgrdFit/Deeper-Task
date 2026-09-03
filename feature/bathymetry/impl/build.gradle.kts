@@ -8,6 +8,7 @@ android {
 
 dependencies {
     implementation(projects.core.coroutines)
+    implementation(projects.core.database)
     implementation(projects.core.designsystem)
     implementation(projects.core.navigation)
     implementation(projects.core.network)
@@ -18,5 +19,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.gson)
     implementation(libs.maps.compose)
 }

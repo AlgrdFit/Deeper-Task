@@ -8,7 +8,6 @@ import com.deeper.deepertask.feature.bathymetry.impl.domain.model.BathymetryResu
 import com.deeper.deepertask.feature.bathymetry.impl.domain.repository.BathymetryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,9 +31,11 @@ internal class BathymetryViewModel @Inject constructor(
     val events = eventsChannel.receiveAsFlow()
 
     private var currentScanId: Long? = null
-    private var loadJob: Job? = null
 
     fun load(scanId: Long) {
+        if (currentScanId == scanId) {
+            return
+        }
         currentScanId = scanId
         startLoad(scanId)
     }
@@ -43,26 +45,35 @@ internal class BathymetryViewModel @Inject constructor(
     }
 
     private fun startLoad(scanId: Long) {
-        loadJob?.cancel()
-        loadJob = viewModelScope.launch {
+        viewModelScope.launch {
             mutableUiState.value = BathymetryUiState.Loading
-            when (val result = repository.getBathymetry(scanId)) {
-                is BathymetryResult.Success -> {
-                    val map = withContext(defaultDispatcher) {
-                        uiMapper(result.data)
-                    }
-                    mutableUiState.value = BathymetryUiState.Content(map)
-                }
+            try {
+                repository.getBathymetry(scanId).collect { result ->
+                    when (result) {
+                        is BathymetryResult.Success -> {
+                            val map = withContext(defaultDispatcher) {
+                                uiMapper(result.data)
+                            }
+                            mutableUiState.value = BathymetryUiState.Content(map)
+                        }
 
-                is BathymetryResult.Failure -> {
-                    if (result.error == BathymetryError.AuthenticationRequired) {
-                        mutableUiState.value = BathymetryUiState.AuthenticationRequired
-                        eventsChannel.send(BathymetryEvent.NavigateToLogin)
-                    } else {
-                        mutableUiState.value = BathymetryUiState.Error(result.error)
+                        is BathymetryResult.Failure -> handleFailure(result.error)
                     }
                 }
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+                mutableUiState.value = BathymetryUiState.Error(BathymetryError.Storage)
             }
+        }
+    }
+
+    private suspend fun handleFailure(error: BathymetryError) {
+        if (error == BathymetryError.AuthenticationRequired) {
+            mutableUiState.value = BathymetryUiState.AuthenticationRequired
+            eventsChannel.send(BathymetryEvent.NavigateToLogin)
+        } else {
+            mutableUiState.value = BathymetryUiState.Error(error)
         }
     }
 }
