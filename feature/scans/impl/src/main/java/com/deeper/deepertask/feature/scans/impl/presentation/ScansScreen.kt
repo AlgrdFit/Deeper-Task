@@ -27,12 +27,14 @@ import com.deeper.deepertask.feature.scans.impl.R
 @Composable
 internal fun ScansScreen(
     scans: List<ScanSummary>,
+    onScanSelected: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val uiState = remember(scans) { scans.toScansUiState() }
 
     ScansContent(
         uiState = uiState,
+        onScanSelected = onScanSelected,
         modifier = modifier,
     )
 }
@@ -40,6 +42,7 @@ internal fun ScansScreen(
 @Composable
 internal fun ScansContent(
     uiState: ScansUiState,
+    onScanSelected: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -61,7 +64,10 @@ internal fun ScansContent(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 items(uiState.items) { item ->
-                    ScanListItem(item)
+                    ScanListItem(
+                        item = item,
+                        onClick = onScanSelected,
+                    )
                 }
             }
 
@@ -83,8 +89,15 @@ internal fun ScansContent(
 }
 
 @Composable
-private fun ScanListItem(item: ScanListItemUi) {
-    Card(modifier = Modifier.fillMaxWidth()) {
+private fun ScanListItem(
+    item: ScanListItemUi,
+    onClick: (Long) -> Unit,
+) {
+    Card(
+        onClick = { item.id?.let(onClick) },
+        modifier = Modifier.fillMaxWidth(),
+        enabled = item.id != null,
+    ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -121,6 +134,7 @@ private fun ScansPreview() {
                     ),
                 ),
             ),
+            onScanSelected = {},
         )
     }
 }
