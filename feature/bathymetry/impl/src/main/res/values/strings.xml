@@ -1,0 +1,10 @@
+<resources>
+    <string name="bathymetry_title">Bathymetry</string>
+    <string name="bathymetry_back">Back</string>
+    <string name="bathymetry_depth_legend">Depth</string>
+    <string name="bathymetry_retry">Retry</string>
+    <string name="bathymetry_authentication_required">Session expired. Returning to login…</string>
+    <string name="bathymetry_error_connectivity">Could not load bathymetry. Check your connection.</string>
+    <string name="bathymetry_error_service">The bathymetry service is unavailable.</string>
+    <string name="bathymetry_error_invalid_data">No valid bathymetry data was returned.</string>
+</resources>
