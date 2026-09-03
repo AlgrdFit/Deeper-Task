@@ -14,4 +14,6 @@ internal sealed interface BathymetryError {
     data object Service : BathymetryError
 
     data object InvalidData : BathymetryError
+
+    data object Storage : BathymetryError
 }

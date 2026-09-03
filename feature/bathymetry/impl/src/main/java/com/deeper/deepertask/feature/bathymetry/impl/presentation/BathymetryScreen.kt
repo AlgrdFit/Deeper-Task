@@ -233,6 +233,7 @@ private val BathymetryError.messageResource: Int
         BathymetryError.Connectivity -> R.string.bathymetry_error_connectivity
         BathymetryError.Service -> R.string.bathymetry_error_service
         BathymetryError.InvalidData -> R.string.bathymetry_error_invalid_data
+        BathymetryError.Storage -> R.string.bathymetry_error_storage
     }
 
 @Preview(name = "Bathymetry error", showBackground = true)

@@ -7,4 +7,5 @@
     <string name="bathymetry_error_connectivity">Could not load bathymetry. Check your connection.</string>
     <string name="bathymetry_error_service">The bathymetry service is unavailable.</string>
     <string name="bathymetry_error_invalid_data">No valid bathymetry data was returned.</string>
+    <string name="bathymetry_error_storage">Could not open the saved bathymetry.</string>
 </resources>
