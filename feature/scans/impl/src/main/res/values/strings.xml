@@ -3,4 +3,6 @@
     <string name="scans_unnamed">Unnamed scan</string>
     <string name="scans_date_unavailable">Date unavailable</string>
     <string name="scans_empty">No scans found</string>
+    <string name="scans_error_cache">Could not open the saved scans.</string>
+    <string name="scans_retry">Retry</string>
 </resources>
